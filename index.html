@@ -7,6 +7,7 @@
 <meta name="theme-color" content="#0f0f14"/>
 <title>UTB - Microeconomía Interactiva</title>
 
+<script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -1081,10 +1082,10 @@
     <!-- Controles -->
     <div class="controls-grid">
       <button class="control-btn btn-secondary" id="btn-prev">
-        <i class="fas fa-arrow-left"></i> Anterior
+        <i class="fas fa-arrow-left"></i> <span class="hidden sm:inline">Anterior</span>
       </button>
       <button class="control-btn btn-secondary" id="btn-next">
-        Siguiente <i class="fas fa-arrow-right"></i>
+        <span class="hidden sm:inline">Siguiente</span> <i class="fas fa-arrow-right"></i>
       </button>
       <button class="control-btn btn-accent" id="btn-explain">
         <i class="fas fa-play"></i> Explicar
