@@ -1,0 +1,1751 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="description" content="Universidad Tecnológica Boliviana - Cuestionario Interactivo de Microeconomía"/>
+<meta name="theme-color" content="#0f0f14"/>
+<title>UTB - Microeconomía Interactiva</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+  :root{
+    --bg-primary: #0f0f14;
+    --bg-secondary: #18181f;
+    --bg-tertiary: #21212b;
+    --accent-cyan: #22d3ee;
+    --accent-pink: #f472b6;
+    --accent-purple: #a78bfa;
+    --accent-amber: #fbbf24;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --border-color: rgba(34, 211, 238, 0.15);
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent; }
+  
+  html, body{
+    height:100%; width:100%;
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    overflow:hidden;
+    touch-action: manipulation;
+  }
+
+  /* Fondo con gradiente sutil */
+  .ambient-bg{
+    position:fixed; inset:0; z-index:-1;
+    background: 
+      radial-gradient(ellipse at 20% 80%, rgba(34, 211, 238, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(167, 139, 250, 0.05) 0%, transparent 50%),
+      var(--bg-primary);
+  }
+
+  /* Header elegante */
+  .app-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 16px 20px;
+    background: rgba(24, 24, 31, 0.9);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 100;
+  }
+
+  .brand-section{
+    display:flex; flex-direction:column; gap: 2px;
+  }
+
+  .university-name{
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(1rem, 3vw, 1.4rem); 
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+
+  .university-name span{
+    color: var(--accent-cyan);
+    font-weight: 600;
+  }
+
+  .subject-tag{
+    font-size: 0.65rem; font-weight: 500;
+    color: var(--accent-pink);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .header-stats{
+    display:flex; align-items:center; gap: 16px;
+  }
+
+  .stat-item{
+    display:flex; flex-direction:column; align-items:flex-end; gap: 2px;
+  }
+
+  .stat-label{
+    font-size: 0.6rem; font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .stat-value{
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem; font-weight: 600;
+    color: var(--accent-cyan);
+  }
+
+  .progress-container{
+    width: 120px; height: 5px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-bar{
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+    width: 0%;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 3px;
+    box-shadow: 0 0 10px rgba(34, 211, 238, 0.3);
+  }
+
+  /* Layout principal */
+  .main-layout{
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 20px;
+    padding: 20px;
+    height: calc(100vh - 73px);
+    overflow: hidden;
+  }
+
+  /* Panel izquierdo */
+  .content-panel{
+    display:flex; flex-direction:column;
+    gap: 16px;
+    overflow: hidden;
+  }
+
+  .panel-card{
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .panel-card:hover{
+    border-color: rgba(34, 211, 238, 0.3);
+    box-shadow: 0 0 30px rgba(34, 211, 238, 0.05);
+  }
+
+  .card-header{
+    display:flex; align-items:center; gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .card-icon{
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, rgba(34, 211, 238, 0.15), rgba(167, 139, 250, 0.15));
+    border-radius: 8px;
+    display:flex; align-items:center; justify-content:center;
+    color: var(--accent-cyan);
+    font-size: 0.9rem;
+  }
+
+  .card-title{
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.8rem; font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  /* Pregunta */
+  .question-box{
+    background: linear-gradient(135deg, rgba(244, 114, 182, 0.08), rgba(244, 114, 182, 0.02));
+    border-left: 3px solid var(--accent-pink);
+    border-radius: 0 10px 10px 0;
+    padding: 16px 20px;
+  }
+
+  .question-number{
+    font-size: 0.7rem; font-weight: 600;
+    color: var(--accent-pink);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+  }
+
+  .question-text{
+    font-size: clamp(1rem, 2.5vw, 1.25rem); 
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--text-primary);
+  }
+
+  /* Zona de respuesta con Profesor Moneda Animada */
+  .answer-container{
+    flex: 1;
+    position: relative;
+    min-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+  }
+
+  .answer-container::-webkit-scrollbar{
+    width: 6px;
+  }
+
+  .answer-container::-webkit-scrollbar-track{
+    background: rgba(255,255,255,0.05);
+    border-radius: 3px;
+  }
+
+  .answer-container::-webkit-scrollbar-thumb{
+    background: var(--accent-cyan);
+    border-radius: 3px;
+  }
+
+  .answer-text{
+    font-size: clamp(0.9rem, 2vw, 1.1rem); 
+    line-height: 1.8;
+    color: var(--text-secondary);
+    padding-right: 100px;
+    padding-bottom: 20px;
+  }
+
+  .word{
+    display: inline-block;
+    padding: 2px 4px;
+    margin: 0 1px;
+    border-radius: 4px;
+    transition: all 0.25s ease;
+  }
+
+  .word.active{
+    color: var(--accent-cyan);
+    background: rgba(34, 211, 238, 0.1);
+    font-weight: 500;
+  }
+
+  .word.keyword{
+    color: var(--accent-pink);
+    border-bottom: 2px solid var(--accent-pink);
+    font-weight: 500;
+  }
+
+  .word.keyword.highlight{
+    color: var(--accent-amber);
+    border-bottom-color: var(--accent-amber);
+    background: rgba(251, 191, 36, 0.1);
+    animation: keywordPulse 0.6s ease;
+  }
+
+  @keyframes keywordPulse{
+    0%{ transform: scale(1); }
+    50%{ transform: scale(1.05); }
+    100%{ transform: scale(1); }
+  }
+
+  /* Profesor Moneda estilo Mario Bros 3 */
+  .professor-coin{
+    position: absolute;
+    width: 70px;
+    height: 85px;
+    z-index: 10;
+    cursor: pointer;
+    will-change: transform;
+  }
+
+  .coin-body{
+    width: 55px;
+    height: 55px;
+    background: radial-gradient(circle at 30% 30%, #ffd700, #ffa500);
+    border-radius: 50%;
+    position: absolute;
+    top: 15px;
+    left: 8px;
+    box-shadow: 
+      0 0 25px rgba(255, 215, 0, 0.6),
+      inset -5px -5px 15px rgba(0,0,0,0.2),
+      inset 5px 5px 15px rgba(255,255,255,0.4);
+    z-index: 2;
+  }
+
+  .coin-body::before{
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 10px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 50%;
+    top: 10px;
+    left: 12px;
+    transform: rotate(-45deg);
+  }
+
+  .coin-face{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 32px;
+    z-index: 3;
+  }
+
+  .coin-eye{
+    position: absolute;
+    width: 10px;
+    height: 12px;
+    background: white;
+    border-radius: 50%;
+    top: 6px;
+    animation: eyeBlink 3s ease-in-out infinite;
+  }
+
+  .coin-eye.left{ left: 6px; }
+  .coin-eye.right{ right: 6px; }
+
+  .coin-eye::after{
+    content: '';
+    position: absolute;
+    width: 5px;
+    height: 7px;
+    background: #1a1a2e;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    animation: eyeLook 4s ease-in-out infinite;
+  }
+
+  @keyframes eyeBlink{
+    0%, 96%, 100%{ transform: scaleY(1); }
+    98%{ transform: scaleY(0.1); }
+  }
+
+  @keyframes eyeLook{
+    0%, 100%{ transform: translateX(0); }
+    25%{ transform: translateX(2px); }
+    75%{ transform: translateX(-2px); }
+  }
+
+  .coin-mouth{
+    position: absolute;
+    width: 16px;
+    height: 8px;
+    border: 2px solid #1a1a2e;
+    border-top: none;
+    border-radius: 0 0 20px 20px;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(26, 26, 46, 0.1);
+  }
+
+  .coin-arm{
+    position: absolute;
+    width: 20px;
+    height: 8px;
+    background: linear-gradient(90deg, #ffa500, #ffd700);
+    border-radius: 10px;
+    top: 28px;
+    z-index: 1;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+
+  .coin-arm.left{
+    left: -8px;
+    transform-origin: right center;
+    animation: armWaveLeft 1s ease-in-out infinite;
+  }
+
+  .coin-arm.right{
+    right: -8px;
+    transform-origin: left center;
+    animation: armWaveRight 1s ease-in-out infinite;
+  }
+
+  .coin-hand{
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: white;
+    border-radius: 50%;
+    top: -2px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .coin-arm.left .coin-hand{ right: -6px; }
+  .coin-arm.right .coin-hand{ left: -6px; }
+
+  @keyframes armWaveLeft{
+    0%, 100%{ transform: rotate(-20deg); }
+    50%{ transform: rotate(20deg); }
+  }
+
+  @keyframes armWaveRight{
+    0%, 100%{ transform: rotate(20deg); }
+    50%{ transform: rotate(-20deg); }
+  }
+
+  .coin-leg{
+    position: absolute;
+    width: 10px;
+    height: 20px;
+    background: linear-gradient(180deg, #ffa500, #ff8c00);
+    border-radius: 8px;
+    bottom: 4px;
+    z-index: 1;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+
+  .coin-leg.left{
+    left: 18px;
+    transform-origin: top center;
+    animation: legKickLeft 0.8s ease-in-out infinite;
+  }
+
+  .coin-leg.right{
+    right: 18px;
+    transform-origin: top center;
+    animation: legKickRight 0.8s ease-in-out infinite;
+  }
+
+  .coin-foot{
+    position: absolute;
+    width: 14px;
+    height: 10px;
+    background: #8b4513;
+    border-radius: 8px 8px 5px 5px;
+    bottom: -2px;
+    left: -2px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  @keyframes legKickLeft{
+    0%, 100%{ transform: rotate(-25deg); }
+    50%{ transform: rotate(25deg); }
+  }
+
+  @keyframes legKickRight{
+    0%, 100%{ transform: rotate(25deg); }
+    50%{ transform: rotate(-25deg); }
+  }
+
+  .professor-coin.pointing .coin-body{
+    animation: coinJump 0.6s ease-in-out infinite;
+    box-shadow: 
+      0 0 40px rgba(251, 191, 36, 0.8),
+      inset -5px -5px 15px rgba(0,0,0,0.2),
+      inset 5px 5px 15px rgba(255,255,255,0.4);
+  }
+
+  .professor-coin.pointing .coin-arm.left{
+    animation: armPointLeft 0.6s ease-in-out infinite;
+  }
+
+  .professor-coin.pointing .coin-arm.right{
+    animation: armPointRight 0.6s ease-in-out infinite;
+  }
+
+  @keyframes coinJump{
+    0%, 100%{ transform: translateY(0) scale(1); }
+    50%{ transform: translateY(-6px) scale(1.05); }
+  }
+
+  @keyframes armPointLeft{
+    0%, 100%{ transform: rotate(-30deg); }
+    50%{ transform: rotate(-60deg); }
+  }
+
+  @keyframes armPointRight{
+    0%, 100%{ transform: rotate(30deg); }
+    50%{ transform: rotate(60deg); }
+  }
+
+  .pointer-ray{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-amber), transparent);
+    border-radius: 2px;
+    opacity: 0;
+    transform-origin: left center;
+    box-shadow: 0 0 15px var(--accent-amber);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .professor-coin.pointing .pointer-ray{
+    opacity: 1;
+    animation: rayPulse 1s ease-in-out infinite;
+  }
+
+  @keyframes rayPulse{
+    0%, 100%{ opacity: 0.6; }
+    50%{ opacity: 1; }
+  }
+
+  /* Panel derecho */
+  .side-panel{
+    display:flex; flex-direction:column;
+    gap: 16px;
+  }
+
+  /* Visualizador de imagen */
+  .image-viewer{
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    position: relative;
+  }
+
+  .viewer-label{
+    position: absolute; top: -8px; left: 16px;
+    background: var(--bg-primary);
+    padding: 4px 12px;
+    font-size: 0.65rem; font-weight: 600;
+    color: var(--accent-cyan);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+  }
+
+  .image-stage{
+    height: 180px;
+    background: linear-gradient(135deg, rgba(34, 211, 238, 0.05), rgba(167, 139, 250, 0.05));
+    border-radius: 10px;
+    display:flex; align-items:center; justify-content:center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .concept-image{
+    max-width: 100%; max-height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  }
+
+  .concept-image.visible{
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  .image-placeholder{
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-align: center;
+    display:flex; flex-direction:column; align-items:center; gap: 10px;
+  }
+
+  .image-placeholder i{
+    font-size: 2rem; opacity: 0.3;
+  }
+
+  .image-caption{
+    margin-top: 12px;
+    text-align: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+    color: var(--accent-cyan);
+    min-height: 22px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s ease;
+  }
+
+  .image-caption.visible{
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .image-counter{
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .image-dot{
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+  }
+
+  .image-dot.active{
+    background: var(--accent-cyan);
+    box-shadow: 0 0 10px var(--accent-cyan);
+    transform: scale(1.3);
+  }
+
+  /* Visualizador de audio */
+  .audio-visualizer{
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 12px;
+    display:flex; align-items:center; justify-content:center;
+    gap: 3px;
+    height: 50px;
+  }
+
+  .audio-bar{
+    width: 3px;
+    background: linear-gradient(180deg, var(--accent-cyan), var(--accent-purple));
+    border-radius: 2px;
+    transition: height 0.15s ease;
+    opacity: 0.4;
+  }
+
+  /* Controles */
+  .controls-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .control-btn{
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.8rem; font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border: none;
+    display:flex; align-items:center; justify-content:center;
+    gap: 6px;
+    touch-action: manipulation;
+  }
+
+  .control-btn:active{
+    transform: scale(0.98);
+  }
+
+  .control-btn:hover:not(:disabled){
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  }
+
+  .control-btn:disabled{
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .btn-primary{
+    background: linear-gradient(135deg, rgba(34, 211, 238, 0.15), rgba(34, 211, 238, 0.05));
+    color: var(--accent-cyan);
+    border: 1px solid rgba(34, 211, 238, 0.3);
+  }
+
+  .btn-primary:hover:not(:disabled){
+    background: linear-gradient(135deg, rgba(34, 211, 238, 0.25), rgba(34, 211, 238, 0.1));
+    border-color: var(--accent-cyan);
+  }
+
+  .btn-secondary{
+    background: rgba(255,255,255,0.05);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+  }
+
+  .btn-secondary:hover:not(:disabled){
+    background: rgba(255,255,255,0.08);
+    color: var(--text-primary);
+    border-color: rgba(255,255,255,0.2);
+  }
+
+  .btn-accent{
+    background: linear-gradient(135deg, rgba(244, 114, 182, 0.15), rgba(244, 114, 182, 0.05));
+    color: var(--accent-pink);
+    border: 1px solid rgba(244, 114, 182, 0.3);
+  }
+
+  .btn-accent:hover:not(:disabled){
+    background: linear-gradient(135deg, rgba(244, 114, 182, 0.25), rgba(244, 114, 182, 0.1));
+    border-color: var(--accent-pink);
+  }
+
+  .btn-warning{
+    background: rgba(251, 191, 36, 0.05);
+    color: var(--accent-amber);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+  }
+
+  .audio-toggle{
+    grid-column: span 2;
+    background: transparent;
+    border: 1px dashed var(--border-color);
+    color: var(--text-muted);
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display:flex; align-items:center; justify-content:center;
+    gap: 8px;
+    font-size: 0.8rem;
+  }
+
+  .audio-toggle:hover{
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+  }
+
+  .audio-toggle.active{
+    background: rgba(34, 211, 238, 0.05);
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+  }
+
+  /* Toast elegante */
+  .toast{
+    position: fixed;
+    bottom: 24px; right: 24px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--accent-cyan);
+    border-radius: 10px;
+    padding: 14px 20px;
+    display:flex; align-items:center; gap: 10px;
+    transform: translateX(150%);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 20px rgba(34, 211, 238, 0.1);
+    z-index: 1000;
+  }
+
+  .toast.show{
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  .toast-icon{
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+    border-radius: 50%;
+    display:flex; align-items:center; justify-content:center;
+    color: var(--bg-primary);
+    font-size: 0.9rem;
+  }
+
+  .toast-text{
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+  }
+
+  /* Responsive - Tablet */
+  @media(max-width: 1024px){
+    .main-layout{ 
+      grid-template-columns: 1fr; 
+      padding: 16px;
+      gap: 16px;
+    }
+    
+    .side-panel{
+      order: -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    
+    .image-viewer{
+      grid-column: span 2;
+    }
+    
+    .audio-visualizer{
+      grid-column: span 2;
+    }
+    
+    .answer-text{
+      padding-right: 80px;
+    }
+    
+    .professor-coin{
+      width: 60px;
+      height: 75px;
+    }
+    
+    .coin-body{
+      width: 48px;
+      height: 48px;
+      top: 13px;
+      left: 6px;
+    }
+  }
+
+  /* Responsive - Móvil */
+  @media(max-width: 768px){
+    .app-header{
+      padding: 12px 16px;
+    }
+    
+    .header-stats{
+      gap: 12px;
+    }
+    
+    .progress-container{
+      width: 80px;
+    }
+    
+    .main-layout{
+      padding: 12px;
+      height: calc(100vh - 65px);
+      overflow-y: auto;
+      display: block;
+    }
+    
+    .content-panel{
+      gap: 12px;
+    }
+    
+    .panel-card{
+      padding: 16px;
+    }
+    
+    .question-box{
+      padding: 14px 16px;
+    }
+    
+    .answer-container{
+      min-height: 180px;
+      max-height: 300px;
+    }
+    
+    .answer-text{
+      padding-right: 60px;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+    
+    .side-panel{
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    
+    .image-viewer{
+      order: -1;
+    }
+    
+    .image-stage{
+      height: 200px;
+    }
+    
+    .controls-grid{
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    
+    .control-btn{
+      padding: 12px;
+      font-size: 0.75rem;
+    }
+    
+    .audio-toggle{
+      grid-column: span 2;
+    }
+    
+    .professor-coin{
+      width: 55px;
+      height: 70px;
+    }
+    
+    .coin-body{
+      width: 42px;
+      height: 42px;
+    }
+    
+    .coin-arm{
+      width: 18px;
+    }
+    
+    .coin-leg{
+      width: 9px;
+      height: 18px;
+    }
+    
+    .toast{
+      bottom: 16px;
+      right: 16px;
+      left: 16px;
+    }
+    
+    .toast-text{
+      font-size: 0.85rem;
+    }
+  }
+
+  /* Responsive - Móvil pequeño */
+  @media(max-width: 480px){
+    .university-name{
+      font-size: 0.95rem;
+    }
+    
+    .stat-label{
+      font-size: 0.55rem;
+    }
+    
+    .stat-value{
+      font-size: 0.9rem;
+    }
+    
+    .question-text{
+      font-size: 1rem;
+    }
+    
+    .answer-text{
+      font-size: 0.9rem;
+      padding-right: 50px;
+    }
+    
+    .professor-coin{
+      width: 50px;
+      height: 65px;
+    }
+    
+    .coin-body{
+      width: 38px;
+      height: 38px;
+      top: 13px;
+      left: 6px;
+    }
+    
+    .coin-face{
+      width: 32px;
+      height: 26px;
+    }
+    
+    .coin-eye{
+      width: 8px;
+      height: 10px;
+    }
+    
+    .coin-mouth{
+      width: 14px;
+      height: 7px;
+    }
+    
+    .image-stage{
+      height: 160px;
+    }
+    
+    .controls-grid{
+      grid-template-columns: 1fr;
+    }
+    
+    .control-btn{
+      width: 100%;
+    }
+    
+    .audio-toggle{
+      grid-column: span 1;
+    }
+  }
+
+  /* Scrollbar elegante */
+  ::-webkit-scrollbar{ width: 8px; }
+  ::-webkit-scrollbar-track{ background: var(--bg-primary); }
+  ::-webkit-scrollbar-thumb{
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover{ background: var(--accent-cyan); }
+</style>
+</head>
+<body>
+
+<div class="ambient-bg"></div>
+
+<!-- Header -->
+<header class="app-header">
+  <div class="brand-section">
+    <div class="university-name">Universidad <span>Tecnológica Boliviana</span></div>
+    <div class="subject-tag">Microeconomía Interactiva</div>
+  </div>
+  
+  <div class="header-stats">
+    <div class="stat-item">
+      <span class="stat-label">Progreso</span>
+      <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Puntos</span>
+      <span class="stat-value" id="score-display">000</span>
+    </div>
+  </div>
+</header>
+
+<!-- Layout Principal -->
+<div class="main-layout">
+  
+  <!-- Panel Izquierdo -->
+  <div class="content-panel">
+    
+    <!-- Tarjeta de Pregunta -->
+    <div class="panel-card">
+      <div class="card-header">
+        <div class="card-icon"><i class="fas fa-question-circle"></i></div>
+        <div class="card-title">Cuestionario</div>
+      </div>
+      
+      <div class="question-box">
+        <div class="question-number" id="question-number">Pregunta 1 de 16</div>
+        <div class="question-text" id="question-text">
+          Bienvenido. Presiona "Explicar" para iniciar.
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarjeta de Respuesta con Profesor Moneda -->
+    <div class="panel-card answer-container" id="answer-container">
+      <div class="answer-text" id="answer-text">
+        <span style="color:var(--text-muted); font-style:italic;">
+          El profesor está listo para explicar. Presiona el botón Explicar...
+        </span>
+      </div>
+      
+      <!-- Profesor Moneda -->
+      <div class="professor-coin" id="professor-coin">
+        <div class="coin-arm left"><div class="coin-hand"></div></div>
+        <div class="coin-arm right"><div class="coin-hand"></div></div>
+        <div class="coin-body">
+          <div class="coin-face">
+            <div class="coin-eye left"></div>
+            <div class="coin-eye right"></div>
+            <div class="coin-mouth"></div>
+          </div>
+        </div>
+        <div class="coin-leg left"><div class="coin-foot"></div></div>
+        <div class="coin-leg right"><div class="coin-foot"></div></div>
+        <div class="pointer-ray" id="pointer-ray"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel Derecho -->
+  <div class="side-panel">
+    
+    <!-- Visualizador de Imagen -->
+    <div class="image-viewer">
+      <div class="viewer-label">Imagen Conceptual</div>
+      <div class="image-stage" id="image-stage">
+        <div class="image-placeholder" id="image-placeholder">
+          <i class="fas fa-image"></i>
+          <span>Esperando...</span>
+        </div>
+        <img class="concept-image" id="concept-image" src="" alt="Concepto">
+      </div>
+      <div class="image-caption" id="image-caption"></div>
+      <div class="image-counter">
+        <div class="image-dot" data-index="0"></div>
+        <div class="image-dot" data-index="1"></div>
+        <div class="image-dot" data-index="2"></div>
+      </div>
+    </div>
+
+    <!-- Visualizador de Audio -->
+    <div class="audio-visualizer" id="audio-viz"></div>
+
+    <!-- Controles -->
+    <div class="controls-grid">
+      <button class="control-btn btn-secondary" id="btn-prev">
+        <i class="fas fa-arrow-left"></i> Anterior
+      </button>
+      <button class="control-btn btn-secondary" id="btn-next">
+        Siguiente <i class="fas fa-arrow-right"></i>
+      </button>
+      <button class="control-btn btn-accent" id="btn-explain">
+        <i class="fas fa-play"></i> Explicar
+      </button>
+      <button class="control-btn btn-warning" id="btn-stop" disabled>
+        <i class="fas fa-stop"></i> Detener
+      </button>
+      <button class="audio-toggle" id="btn-audio">
+        <i class="fas fa-volume-mute"></i> Activar Audio
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <div class="toast-icon"><i class="fas fa-coins"></i></div>
+  <div class="toast-text">+10 puntos</div>
+</div>
+
+<!-- Audio -->
+<audio id="bg-audio" loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=lofi-study-112778.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+/* =========================================================
+   DATOS
+   ========================================================= */
+const BANCO_PREGUNTAS = [
+  { 
+    q: "¿Qué estudia la microeconomía y con qué otros nombres se la conoce?", 
+    a: "La microeconomía estudia el comportamiento económico y las decisiones de consumidores, familias y empresas, basándose en tres pilares: la teoría del consumidor, que analiza cómo la gente gasta su presupuesto; la teoría de la empresa, que define cómo los negocios buscan maximizar ganancias; y las estructuras de mercado. Todo esto se rige por la ley de la oferta y la demanda, la cual dicta que el precio sube si el producto es muy buscado y escasea, y baja si abunda.",
+    keywords: ["presupuesto", "ganancias", "demanda"],
+    images: ["res/pre1.jpg", "res/pre2.jpg", "res/pre3.jpg"],
+    captions: ["Teoría del Consumidor", "Teoría de la Empresa", "Ley de Oferta y Demanda"]
+  },
+  { 
+    q: "¿Cuál es la diferencia entre Micro y Macroeconomía?", 
+    a: "La Microeconomía estudia el comportamiento individual de personas, familias y empresas en mercados específicos, enfocándose en cómo se fijan los precios a través de la ley de la oferta y la demanda, por lo que se le conoce formalmente como la Teoría de los Precios. La Macroeconomía estudia la economía a nivel global y en conjunto, enfocándose en los grandes indicadores de todo un país como la inflación, el desempleo o el crecimiento económico.",
+    keywords: ["Microeconomía", "Macroeconomía", "inflación"],
+    images: ["res/pre4.png", "res/pre5.png", "res/pre6.png"],
+    captions: ["Teoría de los Precios", "Teoría del Ingreso Nacional", "Indicadores Macroeconómicos"]
+  },
+  { 
+    q: "Defina qué es el Mercado y sus componentes", 
+    a: "El mercado es cualquier medio físico o virtual donde los compradores llamados demandantes y los vendedores llamados ofertantes interactúan para intercambiar bienes o servicios a un precio determinado. Sus tres componentes principales son los compradores, los vendedores y las mercancías. Como ejemplos claros tenemos un mercado tradicional de abastos, la plataforma de Amazon, o la Bolsa de Valores que es un mercado financiero.",
+    keywords: ["demandantes", "ofertantes", "financiero"],
+    images: ["res/pre7.png", "res/pre8.png", "res/pre9.png"],
+    captions: ["Compradores demandantes", "Vendedores ofertantes", "Mercado financiero"]
+  },
+  { 
+    q: "¿Qué es la Demanda?", 
+    a: "La demanda es la cantidad total de un bien o servicio que los consumidores están dispuestos y tienen la capacidad económica de adquirir a los diferentes precios que ofrece el mercado en un momento determinado.",
+    keywords: ["servicio", "económica", "determinado"],
+    images: ["res/pre10.png", "res/pre11.png", "res/pre12.png"],
+    captions: ["Bien o servicio", "Capacidad económica", "Momento determinado"]
+  },
+  { 
+    q: "¿Cuáles son las características de la Demanda?", 
+    a: "La demanda se caracteriza principalmente por tener una relación inversa con el precio conocida como la Ley de la Demanda, la cual dicta que si el precio sube la cantidad demandada baja. También se caracteriza por estar limitada por el presupuesto del consumidor, y por representarse en los libros con una curva que tiene una pendiente negativa.",
+    keywords: ["Demanda", "presupuesto", "negativa"],
+    images: ["res/pre13.png", "res/pre14.png", "res/pre15.png"],
+    captions: ["Ley de la Demanda", "Presupuesto del consumidor", "Pendiente negativa"]
+  },
+  { 
+    q: "¿Qué es la Oferta?", 
+    a: "La oferta es la cantidad de bienes, mercancías o servicios que las empresas o los productores están dispuestos y pueden vender en el mercado a distintos precios en un periodo de tiempo determinado.",
+    keywords: ["servicios", "dispuestos", "determinado"],
+    images: ["res/pre16.png", "res/pre17.png", "res/pre18.png"],
+    captions: ["Bienes o servicios", "Productores están dispuestos", "Periodo determinado"]
+  },
+  { 
+    q: "¿Cuáles son las características de la Oferta?", 
+    a: "La oferta se caracteriza por tener una relación directa con el precio conocida como la Ley de la Oferta, la cual dicta que si el precio de mercado sube las empresas ofrecen más productos. Además, está fuertemente condicionada por los costos de producción, su objetivo principal es la maximización de las ganancias y se representa con una curva de pendiente positiva.",
+    keywords: ["Oferta", "ganancias", "positiva"],
+    images: ["res/pre19.png", "res/pre20.png", "res/pre21.png"],
+    captions: ["Ley de la Oferta", "Maximización de las ganancias", "Pendiente positiva"]
+  },
+  { 
+    q: "¿Cuáles son los determinantes de la Demanda?", 
+    a: "Los determinantes de la demanda son los factores externos que cambian el deseo o la capacidad de comprar. Estos factores son el ingreso de los consumidores, los gustos o modas que alteran el deseo, el número de compradores, y el precio de los bienes relacionados que se dividen en bienes sustitutos como el pollo y la carne, y bienes complementarios como la gasolina y los autos.",
+    keywords: ["modas", "sustitutos", "complementarios"],
+    images: ["res/pre22.png", "res/pre23.png", "res/pre24.png"],
+    captions: ["Gustos o modas", "Bienes sustitutos", "Bienes complementarios"]
+  },
+  { 
+    q: "¿Cuáles son los determinantes de la Oferta?", 
+    a: "Los determinantes de la oferta son las variables externas que alteran la cantidad a fabricar. Estos elementos son el costo de los insumos o materias primas, el número de vendedores compitiendo, las expectativas sobre los precios del futuro, la tecnología disponible que al mejorar reduce los costos, y las políticas del gobierno mediante el cobro de impuestos o la entrega de subsidios.",
+    keywords: ["insumos", "disponible", "subsidios"],
+    images: ["res/pre25.png", "res/pre26.png", "res/pre27.png"],
+    captions: ["Costo de los insumos", "Tecnología disponible", "Impuestos o subsidios"]
+  },
+  { 
+    q: "¿Defina equilibrio de mercado y explique cómo se logra?", 
+    a: "El equilibrio de mercado es la situación óptima en la que la cantidad de bienes que los compradores quieren adquirir es exactamente igual a la cantidad que los vendedores quieren fabricar al mismo precio. Esto se logra de forma automática en el punto donde se cruzan las curvas llamado Punto de Equilibrio, haciendo que el mercado se autorregularse.",
+    keywords: ["adquirir", "fabricar", "Equilibrio"],
+    images: ["res/pre28.png", "res/pre29.png", "res/pre30.png"],
+    captions: ["Cantidad a adquirir", "Cantidad a fabricar", "Punto de Equilibrio"]
+  },
+  { 
+    q: "¿Qué es un mercado de Competencia Perfecta? Mencione sus características", 
+    a: "La competencia perfecta es una estructura de mercado teórica e ideal en la cual ningún comprador ni vendedor tiene poder para influir en el precio. Sus características son que el producto sea totalmente homogéneo o idéntico, que exista una información perfecta donde todos conocen los precios reales, y que haya una total libertad de entrada y salida.",
+    keywords: ["homogéneo", "perfecta", "entrada"],
+    images: ["res/pre31.png", "res/pre32.png", "res/pre33.png"],
+    captions: ["Producto homogéneo", "Información perfecta", "Libertad de entrada"]
+  },
+  { 
+    q: "¿Qué es Monopolio?", 
+    a: "El monopolio es una estructura de mercado de competencia imperfecta donde existe un único vendedor que controla la producción de todo un sector y se enfrenta a una gran cantidad de compradores, lo que le da un poder total para fijar los precios o restringir las cantidades según su conveniencia.",
+    keywords: ["imperfecta", "vendedor", "poder"],
+    images: ["res/pre34.png", "res/pre35.png", "res/pre36.png"],
+    captions: ["Competencia imperfecta", "Único vendedor", "Poder total"]
+  },
+  { 
+    q: "¿Qué es Oligopolio?", 
+    a: "El oligopolio es una estructura de mercado intermedia en la que la producción está dominada por un pequeño grupo de empresas, lo que genera una fuerte interdependencia mutua ya que las decisiones de una firma afectan directamente las ganancias de las demás, empujándolas a realizar acuerdos de precios prohibidos.",
+    keywords: ["empresas", "mutua", "precios"],
+    images: ["res/pre37.png", "res/pre38.png", "res/pre1.png"],
+    captions: ["Pequeño grupo de empresas", "Interdependencia mutua", "Acuerdos de precios"]
+  },
+  { 
+    q: "Defina Excedente del Consumidor y Excedente del Productor", 
+    a: "El excedente del consumidor es el beneficio monetario neto que obtienen los compradores, medido como la diferencia entre el precio máximo que estaban dispuestos a pagar y el precio real. Por otro lado, el excedente del productor es la diferencia entre el precio real recibido y el precio mínimo al que estaban dispuestos a vender.",
+    keywords: ["monetario", "máximo", "mínimo"],
+    images: ["res/pre2.png", "res/pre3.png", "res/pre4.png"],
+    captions: ["Beneficio monetario neto", "Precio máximo", "Precio mínimo"]
+  },
+  { 
+    q: "¿Cuándo se dan los desplazamientos de demanda y oferta?", 
+    a: "Los desplazamientos de las curvas ocurren únicamente cuando cambia cualquier determinante externo que no sea el precio del propio producto. Un desplazamiento en la demanda ocurre hacia la derecha si aumentan los ingresos, y hacia la izquierda si disminuyen; mientras que en la oferta ocurre a la derecha si mejora la tecnología, y a la izquierda si producir se vuelve más caro.",
+    keywords: ["externo", "derecha", "izquierda"],
+    images: ["res/pre5.png", "res/pre6.png", "res/pre7.png"],
+    captions: ["Determinante externo", "Desplazamiento a la derecha", "Desplazamiento a la izquierda"]
+  },
+  { 
+    q: "¿Qué es Precio Mínimo y Precio Máximo? ¿Cómo actúan impuestos y subsidios?", 
+    a: "Las distorsiones son intervenciones del Estado. El Precio Mínimo es un tope fijado por encima del equilibrio para proteger a los productores, y el Precio Máximo es un límite fijado por debajo del equilibrio para proteger a los consumidores, provocando un exceso de demanda o escasez. Los impuestos contraen el comercio, mientras que los subsidios estimulan la producción.",
+    keywords: ["Mínimo", "Máximo", "demanda"],
+    images: ["res/pre8.png", "res/pre9.png", "res/pre10.png"],
+    captions: ["Precio Mínimo", "Precio Máximo", "Exceso de demanda"]
+  }
+];
+
+/* =========================================================
+   ESTADO
+   ========================================================= */
+const estado = {
+  actual: 0,
+  puntaje: 0,
+  hablando: false,
+  palabras: [],
+  indicePalabra: 0,
+  voz: null,
+  audioActivo: false,
+  imagenActual: 0,
+  monedaAnimacion: null,
+  posicionMoneda: { x: 0, y: 0 },
+  direccion: { x: 1, y: 1 },
+  velocidad: 2
+};
+
+const elementos = {
+  preguntaNum: document.getElementById('question-number'),
+  preguntaText: document.getElementById('question-text'),
+  respuesta: document.getElementById('answer-text'),
+  profesorMoneda: document.getElementById('professor-coin'),
+  rayo: document.getElementById('pointer-ray'),
+  imagenConcepto: document.getElementById('concept-image'),
+  placeholderImagen: document.getElementById('image-placeholder'),
+  captionImagen: document.getElementById('image-caption'),
+  barraProgreso: document.getElementById('progress-bar'),
+  puntaje: document.getElementById('score-display'),
+  toast: document.getElementById('toast'),
+  audioViz: document.getElementById('audio-viz'),
+  bgAudio: document.getElementById('bg-audio'),
+  container: document.getElementById('answer-container'),
+  imageDots: document.querySelectorAll('.image-dot')
+};
+
+/* =========================================================
+   INICIALIZACIÓN
+   ========================================================= */
+function iniciar(){
+  renderizarPregunta();
+  configurarAudioViz();
+  configurarEventos();
+  cargarVoz();
+  iniciarMovimientoContinuoMoneda();
+}
+
+function configurarAudioViz(){
+  for(let i=0; i<20; i++){
+    const barra = document.createElement('div');
+    barra.className = 'audio-bar';
+    barra.style.height = '4px';
+    elementos.audioViz.appendChild(barra);
+  }
+}
+
+function cargarVoz(){
+  const cargar = () => {
+    const voces = window.speechSynthesis.getVoices();
+    estado.voz = voces.find(v => /es[-_][MX|US|419]/i.test(v.lang)) ||
+                  voces.find(v => /^es/i.test(v.lang));
+  };
+  
+  window.speechSynthesis.onvoiceschanged = cargar;
+  setTimeout(cargar, 500);
+}
+
+/* =========================================================
+   MOVIMIENTO CONTINUO
+   ========================================================= */
+function iniciarMovimientoContinuoMoneda(){
+  const container = elementos.container;
+  const rect = container.getBoundingClientRect();
+  
+  estado.posicionMoneda.x = Math.random() * (rect.width - 80);
+  estado.posicionMoneda.y = Math.random() * (rect.height - 100);
+  
+  estado.direccion.x = Math.random() > 0.5 ? 1 : -1;
+  estado.direccion.y = Math.random() > 0.5 ? 1 : -1;
+  
+  actualizarPosicionMoneda();
+  animarMoneda();
+}
+
+function animarMoneda(){
+  if(!estado.hablando){
+    const container = elementos.container;
+    const rect = container.getBoundingClientRect();
+    const maxX = rect.width - 70;
+    const maxY = rect.height - 90;
+    
+    estado.posicionMoneda.x += estado.velocidad * estado.direccion.x;
+    estado.posicionMoneda.y += estado.velocidad * estado.direccion.y;
+    
+    if(estado.posicionMoneda.x <= 0 || estado.posicionMoneda.x >= maxX){
+      estado.direccion.x *= -1;
+      if(estado.direccion.x < 0){
+        elementos.profesorMoneda.style.transform = 'scaleX(-1)';
+      } else {
+        elementos.profesorMoneda.style.transform = 'scaleX(1)';
+      }
+    }
+    
+    if(estado.posicionMoneda.y <= 0 || estado.posicionMoneda.y >= maxY){
+      estado.direccion.y *= -1;
+    }
+    
+    if(Math.random() < 0.02){
+      estado.direccion.x = Math.random() > 0.5 ? 1 : -1;
+    }
+    if(Math.random() < 0.02){
+      estado.direccion.y = Math.random() > 0.5 ? 1 : -1;
+    }
+    
+    actualizarPosicionMoneda();
+  }
+  
+  requestAnimationFrame(animarMoneda);
+}
+
+function actualizarPosicionMoneda(){
+  elementos.profesorMoneda.style.left = estado.posicionMoneda.x + 'px';
+  elementos.profesorMoneda.style.top = estado.posicionMoneda.y + 'px';
+}
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+function renderizarPregunta(){
+  const q = BANCO_PREGUNTAS[estado.actual];
+  elementos.preguntaNum.textContent = `Pregunta ${estado.actual + 1} de ${BANCO_PREGUNTAS.length}`;
+  elementos.preguntaText.textContent = q.q;
+  elementos.respuesta.innerHTML = `
+    <span style="color:var(--text-muted); font-style:italic;">
+      Presiona "Explicar" para que el profesor explique...
+    </span>
+  `;
+  
+  ocultarImagen();
+  resetProfesorMoneda();
+  actualizarProgreso();
+  resetImageCounter();
+}
+
+function actualizarProgreso(){
+  const porcentaje = ((estado.actual + 1) / BANCO_PREGUNTAS.length) * 100;
+  elementos.barraProgreso.style.width = porcentaje + '%';
+  elementos.puntaje.textContent = estado.puntaje.toString().padStart(3, '0');
+}
+
+function resetProfesorMoneda(){
+  elementos.profesorMoneda.classList.remove('pointing');
+  gsap.to(elementos.rayo, {
+    width: 0,
+    opacity: 0,
+    rotation: 0,
+    duration: 0.3
+  });
+  elementos.profesorMoneda.style.transform = 'scaleX(1)';
+}
+
+function resetImageCounter(){
+  estado.imagenActual = 0;
+  elementos.imageDots.forEach(dot => dot.classList.remove('active'));
+}
+
+function actualizarImageCounter(){
+  elementos.imageDots.forEach((dot, index) => {
+    dot.classList.toggle('active', index === estado.imagenActual);
+  });
+}
+
+/* =========================================================
+   SISTEMA DE VOZ
+   ========================================================= */
+function explicar(){
+  if(!window.speechSynthesis){
+    mostrarToast('Tu navegador no soporta síntesis de voz', 'error');
+    return;
+  }
+  
+  if(estado.hablando) return;
+  
+  if(!estado.audioActivo) activarAudio();
+  
+  estado.hablando = true;
+  estado.imagenActual = 0;
+  
+  const q = BANCO_PREGUNTAS[estado.actual];
+  
+  elementos.respuesta.innerHTML = prepararTexto(q.a, q.keywords);
+  estado.palabras = Array.from(elementos.respuesta.querySelectorAll('.word'));
+  
+  const utter = new SpeechSynthesisUtterance(q.a);
+  if(estado.voz){
+    utter.voice = estado.voz;
+    utter.lang = estado.voz.lang;
+  } else {
+    utter.lang = 'es-MX';
+  }
+  utter.rate = 0.92;
+  utter.pitch = 1;
+  
+  utter.onboundary = (e) => {
+    if(e.name === 'word') sincronizarPalabra(e.charIndex, q);
+  };
+  
+  utter.onend = () => finalizarExplicacion();
+  utter.onerror = () => finalizarExplicacion();
+  
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utter);
+  
+  elementos.profesorMoneda.classList.add('pointing');
+  animarAudio();
+  
+  document.getElementById('btn-explain').disabled = true;
+  document.getElementById('btn-stop').disabled = false;
+}
+
+function prepararTexto(texto, keywords){
+  return texto.split(/(\s+)/).map(palabra => {
+    const limpia = palabra.toLowerCase().replace(/[.,;:!?]/g, '');
+    const esClave = keywords.some(kw => 
+      limpia === kw.toLowerCase() || 
+      palabra.toLowerCase().includes(kw.toLowerCase())
+    );
+    return `<span class="word" data-palabra="${limpia}" ${esClave ? 'data-es-clave="true"' : ''}>${palabra}</span>`;
+  }).join('');
+}
+
+function sincronizarPalabra(indiceChar, datosPregunta){
+  let acumulado = 0;
+  let palabraActual = null;
+  
+  for(let palabra of estado.palabras){
+    const texto = palabra.textContent;
+    if(acumulado >= indiceChar){
+      palabraActual = palabra;
+      break;
+    }
+    acumulado += texto.length;
+  }
+  
+  if(!palabraActual) return;
+  
+  estado.palabras.forEach(p => p.classList.remove('active'));
+  palabraActual.classList.add('active');
+  
+  const textoPalabra = palabraActual.textContent.toLowerCase().replace(/[.,;:!?]/g, '');
+  
+  if(estado.imagenActual < 3){
+    const keywordActual = datosPregunta.keywords[estado.imagenActual].toLowerCase();
+    
+    if((textoPalabra === keywordActual || textoPalabra.includes(keywordActual))){
+      mostrarImagen(datosPregunta, estado.imagenActual);
+      resaltarPalabra(palabraActual);
+      moverMonedaHaciaPalabra(palabraActual);
+      estado.imagenActual++;
+      actualizarImageCounter();
+    }
+  }
+}
+
+function resaltarPalabra(palabra){
+  palabra.classList.add('keyword', 'highlight');
+  palabra.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function moverMonedaHaciaPalabra(palabra){
+  const container = elementos.container;
+  const containerRect = container.getBoundingClientRect();
+  const palabraRect = palabra.getBoundingClientRect();
+  
+  const targetX = palabraRect.left - containerRect.left - 35;
+  const targetY = palabraRect.top - containerRect.top - 25;
+  
+  const deltaX = targetX - estado.posicionMoneda.x;
+  const deltaY = targetY - estado.posicionMoneda.y;
+  const angulo = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+  
+  gsap.to(elementos.profesorMoneda, {
+    x: targetX,
+    y: targetY,
+    rotation: angulo + 90,
+    duration: 1.2,
+    ease: "elastic.out(1, 0.5)",
+    onComplete: () => {
+      estado.posicionMoneda.x = targetX;
+      estado.posicionMoneda.y = targetY;
+      
+      const rayoAngulo = angulo;
+      gsap.to(elementos.rayo, {
+        width: 80,
+        opacity: 1,
+        rotation: rayoAngulo,
+        duration: 0.5,
+        transformOrigin: "left center"
+      });
+    }
+  });
+}
+
+function mostrarImagen(datos, indice){
+  elementos.placeholderImagen.style.display = 'none';
+  elementos.imagenConcepto.src = datos.images[indice];
+  elementos.captionImagen.textContent = datos.captions[indice];
+  
+  setTimeout(() => {
+    elementos.imagenConcepto.classList.add('visible');
+    elementos.captionImagen.classList.add('visible');
+  }, 50);
+  
+  reproducirTono(880, 0.15);
+}
+
+function finalizarExplicacion(){
+  estado.hablando = false;
+  
+  elementos.profesorMoneda.classList.remove('pointing');
+  
+  gsap.to(elementos.rayo, {
+    width: 0,
+    opacity: 0,
+    duration: 0.3
+  });
+  
+  estado.palabras.forEach(p => p.classList.remove('active'));
+  
+  document.getElementById('btn-explain').disabled = false;
+  document.getElementById('btn-stop').disabled = true;
+  
+  agregarPuntaje(10);
+  
+  elementos.profesorMoneda.style.transform = 'scaleX(1)';
+  
+  setTimeout(() => {
+    ocultarImagen();
+  }, 6000);
+}
+
+function detenerExplicacion(){
+  window.speechSynthesis.cancel();
+  finalizarExplicacion();
+}
+
+/* =========================================================
+   AUDIO
+   ========================================================= */
+function activarAudio(){
+  elementos.bgAudio.volume = 0.15;
+  elementos.bgAudio.play().catch(e => console.log('Audio bloqueado'));
+  estado.audioActivo = true;
+  
+  const btn = document.getElementById('btn-audio');
+  btn.classList.add('active');
+  btn.innerHTML = '<i class="fas fa-volume-up"></i> Audio Activo';
+}
+
+function animarAudio(){
+  if(!estado.hablando) return;
+  
+  const barras = elementos.audioViz.querySelectorAll('.audio-bar');
+  barras.forEach(barra => {
+    const altura = 4 + Math.random() * 32;
+    barra.style.height = altura + 'px';
+    barra.style.opacity = 0.6 + Math.random() * 0.4;
+  });
+  
+  requestAnimationFrame(animarAudio);
+}
+
+function reproducirTono(freq, duracion){
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if(!AudioContext) return;
+  
+  const ctx = new AudioContext();
+  const osc = ctx.createOscillator();
+  const ganancia = ctx.createGain();
+  
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(freq, ctx.currentTime);
+  
+  ganancia.gain.setValueAtTime(0.1, ctx.currentTime);
+  ganancia.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duracion);
+  
+  osc.connect(ganancia);
+  ganancia.connect(ctx.destination);
+  
+  osc.start();
+  osc.stop(ctx.currentTime + duracion);
+}
+
+/* =========================================================
+   PUNTAJE Y TOAST
+   ========================================================= */
+function agregarPuntaje(puntos){
+  estado.puntaje += puntos;
+  elementos.puntaje.textContent = estado.puntaje.toString().padStart(3, '0');
+  mostrarToast(`+${puntos} puntos ganados`, 'success');
+}
+
+function mostrarToast(mensaje, tipo){
+  const toast = elementos.toast;
+  toast.querySelector('.toast-text').textContent = mensaje;
+  
+  if(tipo === 'error'){
+    toast.querySelector('.toast-icon').innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+    toast.style.borderColor = 'var(--accent-pink)';
+  } else {
+    toast.querySelector('.toast-icon').innerHTML = '<i class="fas fa-coins"></i>';
+    toast.style.borderColor = 'var(--accent-cyan)';
+  }
+  
+  toast.classList.add('show');
+  
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
+function ocultarImagen(){
+  elementos.imagenConcepto.classList.remove('visible');
+  elementos.captionImagen.classList.remove('visible');
+  setTimeout(() => {
+    elementos.placeholderImagen.style.display = 'flex';
+    elementos.imagenConcepto.src = '';
+  }, 300);
+}
+
+/* =========================================================
+   NAVEGACIÓN
+   ========================================================= */
+function siguientePregunta(){
+  if(estado.actual >= BANCO_PREGUNTAS.length - 1) return;
+  if(estado.hablando) detenerExplicacion();
+  
+  estado.actual++;
+  transicionPregunta(1);
+}
+
+function anteriorPregunta(){
+  if(estado.actual <= 0) return;
+  if(estado.hablando) detenerExplicacion();
+  
+  estado.actual--;
+  transicionPregunta(-1);
+}
+
+function transicionPregunta(dir){
+  gsap.to('.panel-card', {
+    x: dir * -30,
+    opacity: 0,
+    duration: 0.25,
+    onComplete: () => {
+      renderizarPregunta();
+      gsap.fromTo('.panel-card',
+        { x: dir * 30, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.3 }
+      );
+    }
+  });
+}
+
+/* =========================================================
+   EVENTOS
+   ========================================================= */
+function configurarEventos(){
+  document.getElementById('btn-explain').addEventListener('click', explicar);
+  document.getElementById('btn-stop').addEventListener('click', detenerExplicacion);
+  document.getElementById('btn-next').addEventListener('click', siguientePregunta);
+  document.getElementById('btn-prev').addEventListener('click', anteriorPregunta);
+  document.getElementById('btn-audio').addEventListener('click', activarAudio);
+  
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'ArrowRight') siguientePregunta();
+    if(e.key === 'ArrowLeft') anteriorPregunta();
+    if(e.key === ' ') { e.preventDefault(); if(!estado.hablando) explicar(); }
+    if(e.key === 'Escape' && estado.hablando) detenerExplicacion();
+  });
+  
+  // Prevenir zoom en doble tap en móviles
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', (e) => {
+    const now = Date.now();
+    if(now - lastTouchEnd <= 300){
+      e.preventDefault();
+    }
+    lastTouchEnd = now;
+  }, false);
+}
+
+// Iniciar
+window.addEventListener('load', iniciar);
+
+// Mantener speech activo
+setInterval(() => {
+  if(estado.hablando && window.speechSynthesis.speaking){
+    window.speechSynthesis.pause();
+    window.speechSynthesis.resume();
+  }
+}, 10000);
+
+// Ajustar posición al redimensionar
+window.addEventListener('resize', () => {
+  const container = elementos.container;
+  const rect = container.getBoundingClientRect();
+  
+  if(estado.posicionMoneda.x > rect.width - 70){
+    estado.posicionMoneda.x = rect.width - 70;
+  }
+  if(estado.posicionMoneda.y > rect.height - 90){
+    estado.posicionMoneda.y = rect.height - 90;
+  }
+  
+  actualizarPosicionMoneda();
+});
+</script>
+</body>
+</html>
